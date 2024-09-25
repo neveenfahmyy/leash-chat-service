@@ -63,14 +63,17 @@ const handleGetChatsWith = async (chatUUID, userToken) => {
     }
 }
 
-const addChatMessage = async (withUUID, userToken, message) => {
+const addChatMessage = async (withUUID, userToken, message, isMedicalPassport, medicalPassportPetUUID) => {
     try {
-        const response = await axios.post(`${BASE_URL}/chat/${withUUID}`, {
+        const formData = {
             message: message,
-            is_medical_passport: false
-        }, {
+            is_medical_passport: isMedicalPassport,
+            medical_passport_pet_uuid: medicalPassportPetUUID
+        };
+        const response = await axios.post(`${BASE_URL}/chat/${withUUID}`, formData, {
             headers: {
-                "Authorization": `Bearer ${userToken}`
+                "Authorization": `Bearer ${userToken}`,
+                "Content-Type": "multipart/form-data"
             }
         });
 
@@ -125,15 +128,21 @@ io.on('connection', (socket) => {
         io.to(user?.socketId).emit('getChatsWith', {data: chatHistory});
     });
 
-    socket.on('privateMessage', async function ({ userUUID, withUUID, message }) {
+    socket.on('privateMessage', async function ({ userUUID, withUUID, message, isMedicalPassport, medicalPassportPetUUID }) {
         const user = userSockets[userUUID];
         const withUser = userSockets[withUUID];
 
-        if (withUser) {
-            io.to(withUser?.socketId).emit('privateMessage', { sender: userUUID, message: message });
+        var response;
+
+        if (isMedicalPassport) {
+            response = await addChatMessage(withUUID, user?.userToken, message, isMedicalPassport, medicalPassportPetUUID);
         }
 
-        await addChatMessage(withUUID, user?.userToken, message);
+        if (withUser) {
+            io.to(withUser?.socketId).emit('privateMessage', { sender: userUUID, message: isMedicalPassport ? response?.medical_passport : message, isMedicalPassport: isMedicalPassport });
+        }
+
+        await addChatMessage(withUUID, user?.userToken, message, isMedicalPassport, medicalPassportPetUUID);
         
         console.log(`Message sent from ${socket.id} to ${withUser?.socketId}`);
     });
