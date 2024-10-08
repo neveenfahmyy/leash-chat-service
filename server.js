@@ -76,7 +76,7 @@ const addChatMessage = async (withUUID, userToken, message, isMedicalPassport, m
                 "Content-Type": "application/json",
             }
         });
-
+        console.log("A7A");
         if (response?.data?.success) {
             console.log("SUCCESS");
             return response?.data?.data;
