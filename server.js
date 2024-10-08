@@ -95,7 +95,6 @@ app.post('/emitMedia', async (req, res) => {
     const withSocketId = userSockets[withId];
 
     if (withSocketId) {
-        console.log("HERE HERE");
         io.to(withSocketId).emit('privateMessage', { sender: userId, media: media });
     }
     
@@ -126,25 +125,6 @@ io.on('connection', (socket) => {
         const chatHistory = await handleGetChatsWith(chatUUID, user?.userToken);
         io.to(user?.socketId).emit('getChatsWith', {data: chatHistory});
     });
-
-    // socket.on('privateMessage', async function ({ userUUID, withUUID, message, isMedicalPassport, medicalPassportPetUUID }) {
-    //     const user = userSockets[userUUID];
-    //     const withUser = userSockets[withUUID];
-
-    //     var response;
-
-    //     if (isMedicalPassport) {
-    //         response = await addChatMessage(withUUID, user?.userToken, message, isMedicalPassport, medicalPassportPetUUID);
-    //     }
-
-    //     if (withUser) {
-    //         io.to(withUser?.socketId).emit('privateMessage', { sender: userUUID, message: isMedicalPassport ? response?.medical_passport : message, isMedicalPassport: isMedicalPassport });
-    //     }
-
-    //     await addChatMessage(withUUID, user?.userToken, message, isMedicalPassport, medicalPassportPetUUID);
-        
-    //     console.log(`Message sent from ${socket.id} to ${withUser?.socketId}`);
-    // });
 
 
     socket.on('privateMessage', async function ({ userUUID, withUUID, message, isMedicalPassport, medicalPassportPetUUID }) {
