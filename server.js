@@ -67,20 +67,19 @@ const addChatMessage = async (withUUID, userToken, message, isMedicalPassport, m
     try {
         const formData = {
             message: message,
-            is_medical_passport: isMedicalPassport,
+            is_medical_passport: isMedicalPassport ? 1 : 0,
             medical_passport_pet_uuid: medicalPassportPetUUID
         };
         const response = await axios.post(`${BASE_URL}/chat/${withUUID}`, formData, {
             headers: {
                 "Authorization": `Bearer ${userToken}`,
-                "Content-Type": "multipart/form-data"
             }
         });
 
         if (response?.data?.success) {
             return response?.data?.data;
         } else {
-            console.error('Error adding chat message:', response.data);
+            console.error('Error adding chat message:');
             return [];
         }
     } catch (error) {
@@ -146,27 +145,6 @@ io.on('connection', (socket) => {
         
     //     console.log(`Message sent from ${socket.id} to ${withUser?.socketId}`);
     // });
-
-
-    // socket.on('privateMessage', async function ({ userUUID, withUUID, message, isMedicalPassport, medicalPassportPetUUID }) {
-    //     const user = userSockets[userUUID];
-    //     const withUser = userSockets[withUUID];
-
-    //     // Call addChatMessage once, considering that if isMedicalPassport is true, message will be null
-    //     const response = await addChatMessage(withUUID, user?.userToken, message, isMedicalPassport, medicalPassportPetUUID);
-
-    //     if (withUser) {
-    //         io.to(withUser?.socketId).emit('privateMessage', { 
-    //             sender: userUUID, 
-    //             message: isMedicalPassport ? null : message, // If medical passport, message is null
-    //             medical_passport: isMedicalPassport ? response?.medical_passport : null, // Send medical passport data if applicable
-    //             isMedicalPassport: isMedicalPassport // Flag for medical passport
-    //         });
-    //     }
-
-    //     console.log(`Message sent from ${socket.id} to ${withUser?.socketId}`);
-    // });
-
 
 
     socket.on('privateMessage', async function ({ userUUID, withUUID, message, isMedicalPassport, medicalPassportPetUUID }) {
