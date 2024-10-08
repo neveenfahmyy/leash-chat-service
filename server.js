@@ -76,9 +76,7 @@ const addChatMessage = async (withUUID, userToken, message, isMedicalPassport, m
                 "Content-Type": "application/json",
             }
         });
-        console.log("A7A");
         if (response?.data?.success) {
-            console.log("SUCCESS");
             return response?.data?.data;
         } else {
             console.error('Error adding chat message:');
@@ -155,15 +153,8 @@ io.on('connection', (socket) => {
 
         var response;
 
-        console.log("A7a FASH5");
-
-
         if (isMedicalPassport) {
-            console.log("5ARA");
             response = await addChatMessage(withUUID, user?.userToken, message, isMedicalPassport, medicalPassportPetUUID);
-            //print response?.medical_passport
-            console.log('Response from addChatMessage:', response);
-            console.log('Medical Passport:', response?.medical_passport);
         }
 
         if (withUser) {
@@ -171,7 +162,6 @@ io.on('connection', (socket) => {
         }
 
         if(!isMedicalPassport){
-            console.log("5ARA 222222222222222222");
             await addChatMessage(withUUID, user?.userToken, message, isMedicalPassport, medicalPassportPetUUID);
         }
         
