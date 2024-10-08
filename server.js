@@ -155,7 +155,7 @@ io.on('connection', (socket) => {
 
         var response;
 
-        console.log(" A7a FASH5");
+        console.log("A7a FASH5");
 
 
         if (isMedicalPassport) {
