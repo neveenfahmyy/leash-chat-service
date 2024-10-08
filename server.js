@@ -147,25 +147,52 @@ io.on('connection', (socket) => {
     //     console.log(`Message sent from ${socket.id} to ${withUser?.socketId}`);
     // });
 
+
+    // socket.on('privateMessage', async function ({ userUUID, withUUID, message, isMedicalPassport, medicalPassportPetUUID }) {
+    //     const user = userSockets[userUUID];
+    //     const withUser = userSockets[withUUID];
+
+    //     // Call addChatMessage once, considering that if isMedicalPassport is true, message will be null
+    //     const response = await addChatMessage(withUUID, user?.userToken, message, isMedicalPassport, medicalPassportPetUUID);
+
+    //     if (withUser) {
+    //         io.to(withUser?.socketId).emit('privateMessage', { 
+    //             sender: userUUID, 
+    //             message: isMedicalPassport ? null : message, // If medical passport, message is null
+    //             medical_passport: isMedicalPassport ? response?.medical_passport : null, // Send medical passport data if applicable
+    //             isMedicalPassport: isMedicalPassport // Flag for medical passport
+    //         });
+    //     }
+
+    //     console.log(`Message sent from ${socket.id} to ${withUser?.socketId}`);
+    // });
+
+
+
     socket.on('privateMessage', async function ({ userUUID, withUUID, message, isMedicalPassport, medicalPassportPetUUID }) {
         const user = userSockets[userUUID];
         const withUser = userSockets[withUUID];
-    
-        // Call addChatMessage once, considering that if isMedicalPassport is true, message will be null
-        const response = await addChatMessage(withUUID, user?.userToken, message, isMedicalPassport, medicalPassportPetUUID);
-    
-        if (withUser) {
-            io.to(withUser?.socketId).emit('privateMessage', { 
-                sender: userUUID, 
-                message: isMedicalPassport ? null : message, // If medical passport, message is null
-                medical_passport: isMedicalPassport ? response?.medical_passport : null, // Send medical passport data if applicable
-                isMedicalPassport: isMedicalPassport // Flag for medical passport
-            });
+
+        var response;
+
+        if (isMedicalPassport) {
+            response = await addChatMessage(withUUID, user?.userToken, message, isMedicalPassport, medicalPassportPetUUID);
+            //print response?.medical_passport
+            console.log('Response from addChatMessage:', response);
+            console.log('Medical Passport:', response?.medical_passport);
         }
-    
+
+        if (withUser) {
+            io.to(withUser?.socketId).emit('privateMessage', { sender: userUUID, isMedicalPassport: isMedicalPassport, message: isMedicalPassport ? null : message, medical_passport: isMedicalPassport ? response?.medical_passport : null });
+        }
+
+        if(!isMedicalPassport){
+            await addChatMessage(withUUID, user?.userToken, message, isMedicalPassport, medicalPassportPetUUID);
+        }
+        
         console.log(`Message sent from ${socket.id} to ${withUser?.socketId}`);
     });
-    
+
     
       
     // Listen for chat messages
