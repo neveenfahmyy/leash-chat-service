@@ -155,6 +155,9 @@ io.on('connection', (socket) => {
 
         var response;
 
+        console.log(" A7a FASH5");
+
+
         if (isMedicalPassport) {
             console.log("5ARA");
             response = await addChatMessage(withUUID, user?.userToken, message, isMedicalPassport, medicalPassportPetUUID);
