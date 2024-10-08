@@ -78,6 +78,7 @@ const addChatMessage = async (withUUID, userToken, message, isMedicalPassport, m
         });
 
         if (response?.data?.success) {
+            console.log("SUCCESS");
             return response?.data?.data;
         } else {
             console.error('Error adding chat message:');
