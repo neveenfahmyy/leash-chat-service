@@ -73,6 +73,7 @@ const addChatMessage = async (withUUID, userToken, message, isMedicalPassport, m
         const response = await axios.post(`${BASE_URL}/chat/${withUUID}`, formData, {
             headers: {
                 "Authorization": `Bearer ${userToken}`,
+                "Content-Type": "application/json",
             }
         });
 
